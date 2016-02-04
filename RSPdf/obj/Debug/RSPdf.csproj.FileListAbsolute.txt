@@ -7,3 +7,4 @@ D:\Practice\RSPdf\RSPdf\obj\Debug\RSPdf.Properties.Resources.resources
 D:\Practice\RSPdf\RSPdf\obj\Debug\RSPdf.csproj.GenerateResource.Cache
 D:\Practice\RSPdf\RSPdf\obj\Debug\RSPdf.exe
 D:\Practice\RSPdf\RSPdf\obj\Debug\RSPdf.pdb
+D:\Practice\RSPdf\RSPdf\bin\Debug\Ionic.Zip.Reduced.dll

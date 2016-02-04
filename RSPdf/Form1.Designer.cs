@@ -31,7 +31,6 @@
             this.btnReset = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
             this.btnSend = new System.Windows.Forms.Button();
-            this.txtPDFPath = new System.Windows.Forms.TextBox();
             this.txtEMLPath = new System.Windows.Forms.TextBox();
             this.btnEML = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -49,7 +48,6 @@
             this.Label2 = new System.Windows.Forms.Label();
             this.txtSmtpHost = new System.Windows.Forms.TextBox();
             this.Label1 = new System.Windows.Forms.Label();
-            this.btnPDF = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -85,27 +83,20 @@
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
-            // txtPDFPath
-            // 
-            this.txtPDFPath.Location = new System.Drawing.Point(12, 40);
-            this.txtPDFPath.Name = "txtPDFPath";
-            this.txtPDFPath.Size = new System.Drawing.Size(245, 22);
-            this.txtPDFPath.TabIndex = 19;
-            // 
             // txtEMLPath
             // 
             this.txtEMLPath.Location = new System.Drawing.Point(12, 12);
             this.txtEMLPath.Name = "txtEMLPath";
-            this.txtEMLPath.Size = new System.Drawing.Size(245, 22);
+            this.txtEMLPath.Size = new System.Drawing.Size(267, 22);
             this.txtEMLPath.TabIndex = 17;
             // 
             // btnEML
             // 
-            this.btnEML.Location = new System.Drawing.Point(263, 10);
+            this.btnEML.Location = new System.Drawing.Point(285, 10);
             this.btnEML.Name = "btnEML";
-            this.btnEML.Size = new System.Drawing.Size(102, 23);
+            this.btnEML.Size = new System.Drawing.Size(80, 23);
             this.btnEML.TabIndex = 18;
-            this.btnEML.Text = "選擇EML壓縮檔";
+            this.btnEML.Text = "選擇檔案";
             this.btnEML.UseVisualStyleBackColor = true;
             this.btnEML.Click += new System.EventHandler(this.btnEML_Click);
             // 
@@ -271,25 +262,13 @@
             this.Label1.TabIndex = 27;
             this.Label1.Text = "SMTP伺服器：";
             // 
-            // btnPDF
-            // 
-            this.btnPDF.Location = new System.Drawing.Point(263, 39);
-            this.btnPDF.Name = "btnPDF";
-            this.btnPDF.Size = new System.Drawing.Size(102, 23);
-            this.btnPDF.TabIndex = 25;
-            this.btnPDF.Text = "選擇PDF壓縮檔";
-            this.btnPDF.UseVisualStyleBackColor = true;
-            this.btnPDF.Click += new System.EventHandler(this.btnPDF_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(379, 384);
-            this.Controls.Add(this.btnPDF);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnReset);
-            this.Controls.Add(this.txtPDFPath);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.txtEMLPath);
@@ -310,7 +289,6 @@
         internal System.Windows.Forms.Button btnReset;
         internal System.Windows.Forms.Button btnExit;
         internal System.Windows.Forms.Button btnSend;
-        internal System.Windows.Forms.TextBox txtPDFPath;
         internal System.Windows.Forms.TextBox txtEMLPath;
         internal System.Windows.Forms.Button btnEML;
         private System.Windows.Forms.TabControl tabControl1;
@@ -328,7 +306,6 @@
         internal System.Windows.Forms.TextBox txtSmtpHost;
         internal System.Windows.Forms.Label Label1;
         private System.Windows.Forms.RichTextBox txtMSG;
-        internal System.Windows.Forms.Button btnPDF;
     }
 }
 

@@ -8,12 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ionic.Zip;
+using System.IO;
 
 namespace RSPdf
 {
-    /*
-     * 本來想重構這個專案，但時間不足
-     */
+
     public partial class Form1 : Form
     {
         public Form1()
@@ -22,7 +21,7 @@ namespace RSPdf
         }
 
         /// <summary>
-        /// 選擇EML壓縮檔
+        /// 選擇壓縮檔
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -42,32 +41,17 @@ namespace RSPdf
             }
         }
 
-        /// <summary>
-        /// 選擇PDF壓縮檔
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnPDF_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog OFD = new OpenFileDialog())
-            {
-                OFD.Filter = "pdf檔、zip檔(*.pdf,*.zip)|*.pdf;*.zip";
-                OFD.Title = "選取檔案";
-                OFD.Multiselect = false;
-
-                if (OFD.ShowDialog() == DialogResult.OK && OFD.FileName != "")
-                {
-                    txtPDFPath.Text = OFD.FileName;
-                }
-            }
-        }
-
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             //切換至SMTP頁籤  帶預設值
             if (tabControl1.SelectedIndex == 1)
             {
-
+                var pSettings = Properties.Settings.Default;
+                pSettings.Reload();
+                txtSmtpHost.Text = pSettings.SettingHost;
+                txtSmtpPort.Text = pSettings.SettingPort.ToString();
+                txtUserAcc.Text = pSettings.SettingAcc;
+                txtUserPw.Text = pSettings.SettingPw;
             }
         }
 
@@ -80,10 +64,10 @@ namespace RSPdf
         {
             int errCount = 0;
             int sucCount = 0;
-            List<string> emlFiles = new List<string>();
 
-            if ( string.IsNullOrEmpty(txtEMLPath.Text.Trim()) ||
-                string.IsNullOrEmpty(txtPDFPath.Text.Trim()) )
+            string sFilePath = txtEMLPath.Text.Trim();
+
+            if ( string.IsNullOrEmpty(sFilePath) )
             {
                 MessageBox.Show("請選擇寄送檔案!", "警告視窗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -91,36 +75,68 @@ namespace RSPdf
 
             try
             {
-                //檔案解壓
+                //Check Zip File
+                if (!sFilePath.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("檔案非zip壓縮檔!請檢查檔案格式!", "警告視窗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                //Get every ZipEntry in zip File
+                List<EmlParser> ListZipEntry = ExtractZip(sFilePath);
+
+                if(ListZipEntry.Count == 0)
+                {
+                    MessageBox.Show("查無待發信件!", "訊息視窗", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                if (MessageBox.Show("解壓縮完畢，確認寄發信件？", "詢問視窗", MessageBoxButtons.OKCancel, MessageBoxIcon.Question)
+                    != System.Windows.Forms.DialogResult.OK)
+                { return; }
+
+
+
             }
             catch (Exception ex)
             {
                 string exMSG = ex.Message;
                 txtMSG.Text += "發生錯誤：" + exMSG + Environment.NewLine;
+                
+                return;
             }
         }
+
 
         /// <summary>
         /// 解壓縮檔案
         /// </summary>
-        /// <param name="ZipToUnpack"></param>
+        /// <param name="ZipFilePath">解壓縮的檔案位置</param>
         /// <returns></returns>
-        private string ExtractZip(string ZipToUnpack)
+        private List<EmlParser> ExtractZip(string ZipFilePath)
         {
+            List<EmlParser> result = new List<EmlParser>();
             try
             {
-                string unZipDir = ZipToUnpack.Split('.')[0];
-                ZipFile Zips = ZipFile.Read(ZipToUnpack);
+                ZipFile Zips = ZipFile.Read(ZipFilePath);
 
                 //處理相同檔案的問題
                 Zips.ExtractProgress += Zips_ExtractProgress;
+
+                foreach (ZipEntry e in Zips)
+                {
+                    EmlParser product = new EmlParser(e);
+
+                    result.Add(product);
+                    //e.Extract(UnzipDirPath, ExtractExistingFileAction.InvokeExtractProgressEvent);
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
 
-            return "";
+            return result;
         }
 
         /// <summary>
@@ -130,6 +146,16 @@ namespace RSPdf
         /// <param name="e"></param>
         void Zips_ExtractProgress(object sender, ExtractProgressEventArgs e)
         {
+            if (e.EventType == ZipProgressEventType.Extracting_BeforeExtractEntry)
+            {
+                txtMSG.Text += e.CurrentEntry.FileName + "開始解壓" + Environment.NewLine;
+            }
+
+            if (e.EventType == ZipProgressEventType.Extracting_AfterExtractEntry)
+            {
+                txtMSG.Text += e.CurrentEntry.FileName + "解壓縮完畢……" + Environment.NewLine;
+            }
+
             if (e.EventType == ZipProgressEventType.Extracting_ExtractEntryWouldOverwrite)
             {
                 ZipEntry entry = e.CurrentEntry;
@@ -155,7 +181,6 @@ namespace RSPdf
         private void btnReset_Click(object sender, EventArgs e)
         {
             txtEMLPath.Clear();
-            txtPDFPath.Clear();
 
             txtMSG.ForeColor = Color.Black;
             txtMSG.Clear();
